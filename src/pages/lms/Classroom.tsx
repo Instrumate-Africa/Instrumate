@@ -15,7 +15,9 @@ export const Classroom: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!courseId) return;
+    if (!courseId) {
+      return;
+    }
 
     const loadClassroom = async () => {
       try {
@@ -41,14 +43,14 @@ export const Classroom: React.FC = () => {
           })
         );
 
-        const completeCourse = {
+        const completeCourse: Course = {
           ...courseData,
           modules: modulesWithChapters,
         };
 
         setCourse(completeCourse);
 
-        // Select first chapter
+        // Select the first chapter automatically
         if (modulesWithChapters[0]?.chapters?.[0]) {
           setActiveChapter(modulesWithChapters[0].chapters[0]);
         }
@@ -63,17 +65,21 @@ export const Classroom: React.FC = () => {
   }, [courseId]);
 
   const handleMarkComplete = async (chapterId: number) => {
-    if (!courseId || !activeChapter) return;
+    if (!courseId || !activeChapter || !course) {
+      return;
+    }
 
     try {
-      const currentModule = course?.modules?.find(
+      const currentModule = course.modules?.find(
         (module: Module) =>
-          module.chapters.some(
+          module.chapters?.some(
             (chapter: Chapter) => chapter.id === chapterId
           )
       );
 
-      if (!currentModule) return;
+      if (!currentModule) {
+        return;
+      }
 
       await lmsService.updateCourseProgress(
         Number(courseId),
@@ -85,7 +91,7 @@ export const Classroom: React.FC = () => {
         prev
           ? {
               ...prev,
-              is_completed: true,
+              completed: true,
             }
           : null
       );
@@ -111,10 +117,9 @@ export const Classroom: React.FC = () => {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)]">
-
+    <div className="flex h-[calc(100vh-3rem)] flex-col">
       {/* Top Bar */}
-      <div className="h-12 bg-white border-b border-gray-200 px-6 flex items-center justify-between">
+      <div className="flex h-10 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-5">
         <Link
           to="/courses"
           className="text-sm font-medium text-gray-500 hover:text-indigo-600"
@@ -122,37 +127,35 @@ export const Classroom: React.FC = () => {
           ← Back to Courses
         </Link>
 
-        <span className="text-sm font-semibold text-gray-800 truncate">
+        <span className="truncate text-sm font-semibold text-gray-800">
           {course.title}
         </span>
       </div>
 
-      {/* Main Workspace */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-8 bg-gray-50">
-          <Content
-            chapter={activeChapter}
-            onMarkComplete={handleMarkComplete}
-          />
-        </div>
-
-        {/* Curriculum */}
-        <div className="w-full lg:w-80 bg-white border-l border-gray-200 overflow-y-auto p-4">
-          <h2 className="text-sm font-bold uppercase tracking-wider text-gray-500 mb-3">
+      {/* Main Classroom Area */}
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        {/* Curriculum Sidebar */}
+        <aside className="w-80 shrink-0 overflow-y-auto border-r border-gray-200 bg-white p-4">
+          <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-gray-500">
             Course Curriculum
           </h2>
 
           <Modules
             modules={course.modules}
             activeChapterId={activeChapter?.id ?? null}
-            onSelectChapter={(chapter) =>
-              setActiveChapter(chapter)
-            }
+            onSelectChapter={(chapter) => {
+              setActiveChapter(chapter);
+            }}
           />
-        </div>
+        </aside>
 
+        {/* Main Content Area */}
+        <main className="min-w-0 flex-1 overflow-y-auto bg-gray-50 px-5 py-4 md:px-6 md:py-5">
+          <Content
+            chapter={activeChapter}
+            onMarkComplete={handleMarkComplete}
+          />
+        </main>
       </div>
     </div>
   );

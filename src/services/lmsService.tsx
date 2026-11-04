@@ -1,9 +1,18 @@
+
 import api from "../api/axios";
 
 import type {
   Course,
   Chapter,
 } from "../types/lms";
+
+export interface Word {
+  [key: string]: unknown;
+}
+
+export interface WordsResponse {
+  words: Word[];
+}
 
 export const lmsService = {
 
@@ -94,8 +103,10 @@ export const lmsService = {
   // ==========================================================
 
   // GET /api/lms/words/?chapter_id=<chapterId>
-  getWords: async (chapterId: number) => {
-    const response = await api.get(
+  getWords: async (
+    chapterId: number
+  ): Promise<WordsResponse> => {
+    const response = await api.get<WordsResponse>(
       "/api/lms/words/",
       {
         params: {
@@ -163,3 +174,4 @@ export const lmsService = {
 };
 
 export default lmsService;
+
