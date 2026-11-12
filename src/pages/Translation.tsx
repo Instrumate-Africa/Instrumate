@@ -6,6 +6,7 @@ import type { MpLandmark } from "../demo/RPMThreeMpPose";
 
 interface TranslationResponse {
   translated_sentences: string[]; // Add this if your backend returns an array of sentences
+  translation: string; // Add this if your backend returns a single translated string
   original_sentences: string[]; // Add this if you want to show the original sentences too
   words: string[]; // Add this if your backend returns an array of individual words
   // add any animation data properties here too if needed
@@ -90,7 +91,7 @@ export default function TranslationPage() {
         console.log("File uploaded successfully. Task ID created:", data.task_id);
 
         // --- STEP 2: Request Translation via Task ID ---
-        const response = await fetch("http://localhost:8000/api/translate/eng_to_ksl/", {
+        const response = await fetch("https://stenothermal-isabell-predigital.ngrok-free.dev/translate/english-to-ksl", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ 'task_id': data.task_id }), 
@@ -118,7 +119,7 @@ export default function TranslationPage() {
       setLoading(true);
       try {
         // Replace with your actual backend endpoint
-        const response = await fetch("http://localhost:8000/api/translate/eng_to_ksl/", {
+        const response = await fetch("https://stenothermal-isabell-predigital.ngrok-free.dev/translate/english-to-ksl", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ text: inputText}),
@@ -225,9 +226,9 @@ export default function TranslationPage() {
               </div>
 
               <p className="text-[#0c151d] text-base text-center px-4 pt-1 pb-3">
-                {translationData?.translated_sentences?.map((sentence, index) => (
+                {translationData?.translated_sentences?.map((sentence, index)  => (
                   <span key={index}>{sentence}</span>
-                )) || "Your translation will appear here."}
+                )) || translationData?.translation || "Your translation will appear here."}
               </p>
 
               <p className="text-[#4574a1] text-sm text-center px-4 pt-1 pb-3">
