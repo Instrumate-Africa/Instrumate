@@ -18,6 +18,8 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Logout from "./pages/Logout";
 import Demo from "./demo/demo";
+import TeamPage from './pages/Team';
+
 import { Courses } from './pages/lms/Courses';
 import { Classroom } from './pages/lms/Classroom';
 
@@ -37,6 +39,8 @@ function AnimatedRoutes() {
           <Route path="/home" element={<Home />} />
           <Route path="/sign-detection" element={<SignDetection />} />
           <Route path="/translation" element={<Translation />} />
+          <Route path='/team' element={<TeamPage />} />
+          <Route path="/Learn" element={<Learn />} />
           {/* <Route path="/Learn" element={<Learn />} /> */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
